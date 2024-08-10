@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+}
+
+group = 'es.daily.pattern'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //https://github.com/sfuhrm/yahoofinance-api
+    implementation 'de.sfuhrm:YahooFinanceAPI:3.17.0'
+
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.15'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'es.daily.pattern.Main'
+    }
+}
+
+task customFatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'es.daily.pattern.Main'
+    }
+    archiveBaseName = 'sp500-daily-pattern-jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
