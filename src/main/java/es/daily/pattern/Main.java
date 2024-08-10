@@ -20,10 +20,10 @@ import static es.daily.pattern.util.Utils.check;
  * @author AndresParMont
  */
 public class Main {
-
     private static final String defaultSymbol = "^SPX";
 
     public static void main(String[] args) {
+
         String symbol;
 
         if (args == null || args.length == 0) {
@@ -33,12 +33,13 @@ public class Main {
         }
 
         try {
+
             StockService stockService = new StockService();
             StockWrapper stockWrapper = stockService.findStock(symbol);
             Stock stock = stockWrapper.getStock();
 
             Calendar from = Calendar.getInstance();
-            from.add(Calendar.DAY_OF_MONTH, -2);
+            from.add(Calendar.DAY_OF_MONTH, -3);
 
             Calendar to = Calendar.getInstance(); // default to now
 
@@ -47,10 +48,16 @@ public class Main {
             boolean pricesAreLower = pricesAreLowers(historial);
             Calendar c;
             String date;
+
+            StringBuilder sb = new StringBuilder();
             for (HistoricalQuote h : historial) {
                 c = h.getDate();
                 date = c.get(Calendar.DAY_OF_MONTH) + "/" + c.get(Calendar.MONTH) + "/" + c.get(Calendar.YEAR);
-                System.out.println("Close price from " + date + ": " + h.getClose().doubleValue());
+                sb.append("Close price from: ");
+                sb.append(date);
+                sb.append(": ");
+                sb.append(h.getClose().doubleValue());
+                sb.append("\n");
             }
 
             historial = stock.getHistory(calendarMinus200(), to, Interval.DAILY);
@@ -58,9 +65,13 @@ public class Main {
 
             boolean result = stock.getQuote().getPrice().doubleValue() > ma && pricesAreLower;
 
-            System.out.println("200 Simple Moving Average: " + ma);
-            System.out.println("Has pattern: " + result);
+            sb.append("200 Simple Moving Average: ");
+            sb.append(ma);
+            sb.append("\n");
+            sb.append("Has pattern: ");
+            sb.append(result);
 
+            System.out.println(sb);
         } catch (IOException e) {
             e.printStackTrace();
         }

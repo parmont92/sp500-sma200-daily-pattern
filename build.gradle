@@ -13,7 +13,7 @@ dependencies {
     //https://github.com/sfuhrm/yahoofinance-api
     implementation 'de.sfuhrm:YahooFinanceAPI:3.17.0'
 
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.15'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.15'
 }
 
 test {
