@@ -2,7 +2,6 @@ package es.daily.pattern;
 
 import es.daily.pattern.model.StockWrapper;
 import es.daily.pattern.service.StockService;
-import es.daily.pattern.technical.MovingAverageByCircularBuffer;
 import es.daily.pattern.util.Utils;
 import yahoofinance.Stock;
 import yahoofinance.histquotes.HistoricalQuote;
@@ -39,23 +38,6 @@ public class Main {
             List<HistoricalQuote> historial = stock.getHistory(from, Calendar.getInstance(), Interval.DAILY);
 
             boolean pricesAreLower = pricesAreLowers(historial.subList(historial.size() - 3, historial.size()));
-            /*
-            Calendar c;
-            String date;
-
-            for (HistoricalQuote h : historial) {
-                c = h.getDate();
-                date = c.get(Calendar.DAY_OF_MONTH) + "/" + c.get(Calendar.MONTH) + "/" + c.get(Calendar.YEAR);
-                sb.append("Close price from: ");
-                sb.append(date);
-                sb.append(": ");
-                sb.append(h.getClose().doubleValue());
-                sb.append("\n");
-            }
-
-            //historial = stock.getHistory(calendarMinus200(), to, Interval.DAILY);
-            // double ma = calculateMovingAverage(200, historial);
-            */
 
             double ma = stock.getQuote().getPriceAvg200().doubleValue();
 
@@ -68,7 +50,7 @@ public class Main {
             sb.append("Has pattern: ");
             sb.append(result);
 
-            System.out.println(sb.toString());
+            System.out.println(sb);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -90,14 +72,5 @@ public class Main {
         }
         return hasPattern;
     }
-
-    private static double calculateMovingAverage(int size, List<HistoricalQuote> historical) {
-        MovingAverageByCircularBuffer ma = new MovingAverageByCircularBuffer(200);
-        for (HistoricalQuote h : historical) {
-            ma.add(h.getClose().doubleValue());
-        }
-        return ma.getMovingAverage();
-    }
-
 
 }
