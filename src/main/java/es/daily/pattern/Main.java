@@ -58,9 +58,8 @@ public class Main {
     }
 
     private static boolean pricesAreLowers(List<HistoricalQuote> historial) {
-        System.out.println("Historical size: " + historial.size());
         for (HistoricalQuote h : historial) {
-            System.out.println("ClosePrice: " + h.getClose().doubleValue());
+            System.out.println("Close Price: " + h.getClose().doubleValue());
         }
         boolean hasPattern = true;
         for (int i = 1; i < historial.size(); i++) {
