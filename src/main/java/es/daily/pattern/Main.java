@@ -10,11 +10,8 @@ import yahoofinance.histquotes.Interval;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import static es.daily.pattern.util.FechasUtils.calendarMinus200;
 import static es.daily.pattern.util.Utils.check;
 
 /**
@@ -33,22 +30,19 @@ public class Main {
         }
 
         try {
-            StockService stockService = new StockService();
-            StockWrapper stockWrapper = stockService.findStock(symbol);
+            StockWrapper stockWrapper = new StockService().findStock(symbol);
             Stock stock = stockWrapper.getStock();
 
             Calendar from = Calendar.getInstance();
-            from.add(Calendar.DAY_OF_MONTH, -4);
+            from.add(Calendar.DAY_OF_MONTH, -5);
 
-            Calendar to = Calendar.getInstance(); // default to now
+            List<HistoricalQuote> historial = stock.getHistory(from, Calendar.getInstance(), Interval.DAILY);
 
-            List<HistoricalQuote> historial = stock.getHistory(from, to, Interval.DAILY);
-
-            boolean pricesAreLower = pricesAreLowers(historial);
+            boolean pricesAreLower = pricesAreLowers(historial.subList(historial.size() - 3, historial.size()));
+            /*
             Calendar c;
             String date;
 
-            StringBuilder sb = new StringBuilder();
             for (HistoricalQuote h : historial) {
                 c = h.getDate();
                 date = c.get(Calendar.DAY_OF_MONTH) + "/" + c.get(Calendar.MONTH) + "/" + c.get(Calendar.YEAR);
@@ -59,11 +53,15 @@ public class Main {
                 sb.append("\n");
             }
 
-            historial = stock.getHistory(calendarMinus200(), to, Interval.DAILY);
-            double ma = calculateMovingAverage(200, historial);
+            //historial = stock.getHistory(calendarMinus200(), to, Interval.DAILY);
+            // double ma = calculateMovingAverage(200, historial);
+            */
+
+            double ma = stock.getQuote().getPriceAvg200().doubleValue();
 
             boolean result = stock.getQuote().getPrice().doubleValue() > ma && pricesAreLower;
 
+            StringBuilder sb = new StringBuilder(5);
             sb.append("200 Simple Moving Average: ");
             sb.append(ma);
             sb.append("\n");
@@ -78,8 +76,19 @@ public class Main {
     }
 
     private static boolean pricesAreLowers(List<HistoricalQuote> historial) {
-        return (check(historial.get(0).getClose(), Utils.Operator.GREATER_THAN, historial.get(1).getClose())
-                && check(historial.get(1).getClose(), Utils.Operator.GREATER_THAN, historial.get(2).getClose()));
+        System.out.println("Historical size: " + historial.size());
+        for (HistoricalQuote h : historial) {
+            System.out.println("ClosePrice: " + h.getClose().doubleValue());
+        }
+        boolean hasPattern = true;
+        for (int i = 1; i < historial.size(); i++) {
+            if (check(historial.get(i - 1).getClose(), Utils.Operator.GREATER_THAN, historial.get(i).getClose())) {
+                hasPattern = true;
+            } else {
+                hasPattern = false;
+            }
+        }
+        return hasPattern;
     }
 
     private static double calculateMovingAverage(int size, List<HistoricalQuote> historical) {
