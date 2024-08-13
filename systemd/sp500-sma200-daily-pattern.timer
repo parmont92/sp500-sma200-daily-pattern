@@ -1,0 +1,8 @@
+[Unit]
+Description=SP500 and SMA200 daily chart patter
+
+[Timer]
+OnCalendar=Mon..Fri 08:30 Europe/Paris
+
+[Install]
+WantedBy=timers.target

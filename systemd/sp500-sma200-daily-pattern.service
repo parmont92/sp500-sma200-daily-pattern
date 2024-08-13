@@ -1,0 +1,10 @@
+[Unit]
+Description=Sends backup to dropbox
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /home/alarm/dev/sp500-sma200-daily-pattern/execute.bash
+
+[Install]
+WantedBy=multi-user.target
