@@ -4,7 +4,7 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/bash /home/alarm/dev/sp500-sma200-daily-pattern/execute.bash
+ExecStart=/usr/bin/python /home/alarm/dev/sp500-sma200-daily-pattern/sp500_sma200.py
 
 [Install]
 WantedBy=multi-user.target
